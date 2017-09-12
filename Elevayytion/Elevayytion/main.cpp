@@ -11,18 +11,21 @@ int main()
 	cout << "loaded device successfully: " << success << endl;
 
 	Process process(cpuz);
-
-	HANDLE weakHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, 8360);
+	
+	//HANDLE weakHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, 8360);
 	//if (process.Attach(GetCurrentProcessId()))
-	if (process.Attach(620))
+	if (process.Attach(GetCurrentProcessId()))
 	{
 		/*
 		if (!process.GrantHandleAccess(weakHandle, PROCESS_ALL_ACCESS))
 			cout << "failed to grant access" << endl;
 			*/
 
-		if (!process.StripPPL())
-			cout << "failed to strip PPL" << endl;
+		// PPL value is 97
+		//if (!process.GivePPL())
+			
+		process.GivePPL();
+		
 		process.Detach();
 	}
 	else 
@@ -32,6 +35,10 @@ int main()
 
 	success = cpuz->UnloadDriver();
 
+	HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 4272);
+	cout << handle << endl;
+
+	while (1) Sleep(1);
+
 	cout << "unloaded device successfully: " << success << endl;
-	system("pause");
 }

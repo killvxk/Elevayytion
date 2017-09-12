@@ -49,6 +49,7 @@ public:
 	void Detach();
 	bool GrantHandleAccess(HANDLE handle, ACCESS_MASK accessRights);
 	bool StripPPL();
+	bool GivePPL();
 
 	bool Read(PVOID base, PVOID buf, size_t len);
 	bool Write(PVOID base, PVOID buf, size_t len);

@@ -20,6 +20,13 @@ struct input_write_mem
 	uint32_t value;
 };
 
+struct input_write_mem_byte
+{
+	uint32_t address_high;
+	uint32_t address_low;
+	uint8_t value;
+};
+
 struct output
 {
 	uint32_t operation;
@@ -164,10 +171,10 @@ uint64_t CPUZ::TranslateLinearAddress(uint64_t directoryTableBase, LPVOID virtua
 	auto Directory = (USHORT)((va >> 21) & 0x1FF); //<! Page Directory Table Index
 	auto Table = (USHORT)((va >> 12) & 0x1FF); //<! Page Table Index
 
-											   // 
-											   // Read the PML4 Entry. DirectoryTableBase has the base address of the table.
-											   // It can be read from the CR3 register or from the kernel process object.
-											   // 
+	// 
+	// Read the PML4 Entry. DirectoryTableBase has the base address of the table.
+	// It can be read from the CR3 register or from the kernel process object.
+	// 
 	auto PML4E = ReadPhysicalAddress<uint64_t>(directoryTableBase + PML4 * sizeof(ULONGLONG));
 
 	if (PML4E == 0)
@@ -284,15 +291,18 @@ bool CPUZ::WritePhysicalAddress(uint64_t address, LPVOID buf, size_t len)
 	if (address == 0 || buf == nullptr)
 		return false;
 
-	if (len == 4) {
+	if (len == 4) 
+	{
 		in.address_high = HIDWORD(address);
 		in.address_low = LODWORD(address);
 		in.value = *(std::uint32_t*)buf;
-
+		
 		return !!DeviceIoControl(this->deviceHandle, IOCTL_WRITE_MEM, &in, sizeof(in), &out, sizeof(out), &io, nullptr);
 	}
-	else {
-		for (int i = 0; i < len / 4; i++) {
+	else if (len > 4) 
+	{
+		for (int i = 0; i < len / 4; i++) 
+		{
 			in.address_high = HIDWORD(address + 4 * i);
 			in.address_low = LODWORD(address + 4 * i);
 			in.value = ((std::uint32_t*)buf)[i];
@@ -300,6 +310,15 @@ bool CPUZ::WritePhysicalAddress(uint64_t address, LPVOID buf, size_t len)
 				return false;
 		}
 		return true;
+	}
+	else 
+	{
+		input_write_mem_byte input = input_write_mem_byte{};
+		input.address_high = HIDWORD(address);
+		input.address_low = LODWORD(address);
+		input.value = *(std::uint8_t*)buf;
+
+		return !!DeviceIoControl(this->deviceHandle, IOCTL_WRITE_MEM, &input, sizeof(input), &out, sizeof(out), &io, nullptr);
 	}
 }
 

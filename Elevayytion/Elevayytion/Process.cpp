@@ -248,3 +248,19 @@ bool Process::StripPPL()
 	printf("value %i\n", value);
 	return true;
 }
+
+bool Process::GivePPL()
+{
+	if (currentContext == nullptr)
+		throw std::runtime_error{ "Not attached to a process." };
+
+	auto entry_addr = currentContext->kernel_entry;
+	auto entry_protection_addr = entry_addr + DynData::offset_ps_protection;
+
+	UCHAR write = 97;
+	Write<UCHAR>(entry_protection_addr, write);
+
+	UCHAR value = Read<UCHAR>(entry_protection_addr);
+	printf("value %i\n", value);
+	return true;
+}
