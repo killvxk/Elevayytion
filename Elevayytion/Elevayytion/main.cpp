@@ -14,7 +14,7 @@ int main()
 	
 	//HANDLE weakHandle = OpenProcess(PROCESS_QUERY_LIMITED_INFORMATION, FALSE, 8360);
 	//if (process.Attach(GetCurrentProcessId()))
-	if (process.Attach(GetCurrentProcessId()))
+	if (process.Attach(624))
 	{
 		/*
 		if (!process.GrantHandleAccess(weakHandle, PROCESS_ALL_ACCESS))
@@ -22,9 +22,9 @@ int main()
 			*/
 
 		// PPL value is 97
-		//if (!process.GivePPL())
+		if (!process.GivePPL())
 			
-		process.GivePPL();
+		//process.StripPPL();
 		
 		process.Detach();
 	}
@@ -35,10 +35,7 @@ int main()
 
 	success = cpuz->UnloadDriver();
 
-	HANDLE handle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, 4272);
-	cout << handle << endl;
-
-	while (1) Sleep(1);
-
 	cout << "unloaded device successfully: " << success << endl;
+
+	system("pause");
 }

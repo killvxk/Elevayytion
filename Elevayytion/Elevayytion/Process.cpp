@@ -237,15 +237,9 @@ bool Process::StripPPL()
 	auto entry_addr = currentContext->kernel_entry;
 	auto entry_protection_addr = entry_addr + DynData::offset_ps_protection;
 
-	UCHAR value = Read<UCHAR>(entry_protection_addr);
+	UCHAR pplValue = 0;
+	Write<UCHAR>(entry_protection_addr, pplValue);
 
-	printf("value %i\n", value);
-	UCHAR write = 0;
-
-	Write<UCHAR>(entry_protection_addr, write);
-
-	value = Read<UCHAR>(entry_protection_addr);
-	printf("value %i\n", value);
 	return true;
 }
 
@@ -257,10 +251,8 @@ bool Process::GivePPL()
 	auto entry_addr = currentContext->kernel_entry;
 	auto entry_protection_addr = entry_addr + DynData::offset_ps_protection;
 
-	UCHAR write = 97;
-	Write<UCHAR>(entry_protection_addr, write);
+	UCHAR pplValue = 97;
+	Write<UCHAR>(entry_protection_addr, pplValue);
 
-	UCHAR value = Read<UCHAR>(entry_protection_addr);
-	printf("value %i\n", value);
 	return true;
 }
